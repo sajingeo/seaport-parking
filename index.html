@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="A guide to the best parking spots in Boston's Seaport District."/>
+  <title>Where to Park in Seaport</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    /* Reset & base styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f9fafb;
+      color: #1f2937;
+      line-height: 1.6;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #111827;
+    }
+
+    p {
+      margin-bottom: 1rem;
+    }
+
+    .parking-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .card {
+      background-color: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    .card h2 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #111827;
+    }
+
+    .card p {
+      margin-bottom: 0.5rem;
+    }
+
+    .card a {
+      color: #3b82f6;
+      text-decoration: none;
+    }
+
+    .card a:hover {
+      text-decoration: underline;
+    }
+
+    .map-container {
+      margin-top: 1rem;
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 ratio */
+      height: 0;
+      overflow: hidden;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .map-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <h1>Where to Park in Seaport, Boston</h1>
+  <p>Discover the top parking spots in Boston’s Seaport District with rates, locations, and embedded Google Maps.</p>
+
+  <div class="parking-list">
+    <!-- Spot 1 -->
+    <div class="card">
+      <h2>One Seaport Garage</h2>
+      <p><strong>Address:</strong> 75 Sleeper St, Boston, MA 02210</p>
+      <p><strong>Rate:</strong> ~$25/day, validated parking available</p>
+      <p><strong>Description:</strong> Located under the One Seaport retail complex. Good for shopping and dining.</p>
+      <a href="https://goo.gl/maps/YM9NmjCwUrjETeiP6" target="_blank">Open in Google Maps</a>
+      <div class="map-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2948.1526850057924!2d-71.04770798454347!3d42.351611979187085!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e370e9b3ae16f1%3A0x75ebc3b5dbf7a88a!2sOne%20Seaport%20Garage!5e0!3m2!1sen!2sus!4v1682982347981" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- Spot 2 -->
+    <div class="card">
+      <h2>EDIC Parking Lot</h2>
+      <p><strong>Address:</strong> 12 Drydock Ave, Boston, MA 02210</p>
+      <p><strong>Rate:</strong> ~$15/day</p>
+      <p><strong>Description:</strong> Outdoor lot close to the Design Center and cruise terminals.</p>
+      <a href="https://goo.gl/maps/4Evgc5kKNTzBxfyD7" target="_blank">Open in Google Maps</a>
+      <div class="map-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2949.032666158497!2d-71.03561008454405!3d42.335542979188934!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e37a8aa354e9b1%3A0xd1fcb23dbed4061a!2sEDIC%20Parking%20Lot!5e0!3m2!1sen!2sus!4v1682982385672" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- Spot 3 -->
+    <div class="card">
+      <h2>Marine Industrial Park Garage</h2>
+      <p><strong>Address:</strong> 12 Drydock Ave Garage, Boston, MA 02210</p>
+      <p><strong>Rate:</strong> ~$20/day</p>
+      <p><strong>Description:</strong> Covered parking with good access to the Seaport waterfront and cruiseport.</p>
+      <a href="https://goo.gl/maps/Fn2e4CJ9pSCy4wwN7" target="_blank">Open in Google Maps</a>
+      <div class="map-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2949.025259363822!2d-71.03564868454404!3d42.33568177918891!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e370c00c4cfc2f%3A0xd20e2ef6f98aa6a9!2sMarine%20Industrial%20Park%20Garage!5e0!3m2!1sen!2sus!4v1682982431692" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- Spot 4 -->
+    <div class="card">
+      <h2>Fan Pier Garage</h2>
+      <p><strong>Address:</strong> 1 Marina Park Drive, Boston, MA 02210</p>
+      <p><strong>Rate:</strong> ~$30/day</p>
+      <p><strong>Description:</strong> Underground garage right on the waterfront near ICA and Liberty Wharf.</p>
+      <a href="https://goo.gl/maps/jV8DPv6ErNEx1Utr6" target="_blank">Open in Google Maps</a>
+      <div class="map-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2948.213166430994!2d-71.0455092845435!3d42.35045657918724!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e370eb1a2b30d3%3A0x1d2f6d14aeec9c67!2sFan%20Pier%20Garage!5e0!3m2!1sen!2sus!4v1682982455880" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- Spot 5 -->
+    <div class="card">
+      <h2>Channelside Lot</h2>
+      <p><strong>Address:</strong> 284 A St, Boston, MA 02210</p>
+      <p><strong>Rate:</strong> ~$20/day</p>
+      <p><strong>Description:</strong> Surface lot near Fort Point Channel and Summer Street bridge.</p>
+      <a href="https://goo.gl/maps/Q1Ect5r99YzHdXht8" target="_blank">Open in Google Maps</a>
+      <div class="map-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2948.705786234597!2d-71.05201228454383!3d42.34127897918783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e370cfa0b25aeb%3A0x9ba015dd1b9e1f1e!2sChannelside%20Parking%20Lot!5e0!3m2!1sen!2sus!4v1682982483245" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Where to Park in Seaport | Built with ❤️ by Sajin Geo</p>
+  </footer>
+</body>
+</html>
