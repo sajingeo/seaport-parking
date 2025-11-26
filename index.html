@@ -961,7 +961,7 @@
                             ` : ''}
                             <div class="spot-footer">
                                 <span class="badge bg-${spot.type}">${typeLabels[spot.type]}</span>
-                                <button class="directions-btn" onclick="event.stopPropagation(); openMaps(${spot.lat}, ${spot.lng})">>
+                                <button class="directions-btn" onclick="event.stopPropagation(); openMaps(${spot.lat}, ${spot.lng})">
                                     <span>↗</span> Get Directions
                                 </button>
                             </div>
@@ -1060,7 +1060,7 @@
                     </div>
                 ` : ''}
                 
-                <button class="btn btn-primary btn-full" onclick="openMaps(${spot.lat}, ${spot.lng})">>
+                <button class="btn btn-primary btn-full" onclick="openMaps(${spot.lat}, ${spot.lng})">
                     <span>↗</span> Get Directions
                 </button>
             `;
