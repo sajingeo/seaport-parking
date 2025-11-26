@@ -545,12 +545,12 @@
         <div class="header-content">
             <div>
                 <h1>Seaport Parking</h1>
-                <p class="subtitle">Find the best parking spots in Boston's Seaport District (For sajin's friends)</p>
+                <p class="subtitle">Find the best parking spots in Boston's Seaport District</p>
             </div>
-            <!---<button class="btn-primary" onclick="showAddModal()">
+            <!-- <button class="btn-primary" onclick="showAddModal()">
                 <span>+</span>
                 Add Parking Spot
-            </button>--->
+            </button> -->
         </div>
     </header>
 
@@ -955,7 +955,7 @@
                             ${spot.rate ? `<div class="spot-rate">${spot.rate}</div>` : ''}
                             ${spot.description ? `<div class="spot-description">${spot.description}</div>` : ''}
                             ${spot.links && spot.links.length > 0 ? `
-                                <div class="spot-links">
+                                <div class="spot-links" style="margin-bottom: 0.75rem;">
                                     ${spot.links.map(link => `<a href="${link}" target="_blank" onclick="event.stopPropagation()" style="color:#2563eb;font-size:0.875rem;text-decoration:none;margin-right:1rem;">🔗 More Info</a>`).join('')}
                                 </div>
                             ` : ''}
