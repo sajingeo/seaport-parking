@@ -1,166 +1,1020 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="A guide to the best parking spots in Boston's Seaport District."/>
-  <title>Where to Park in Seaport</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <style>
-    /* Reset & base styling */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seaport Parking - Boston</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f9fafb;
-      color: #1f2937;
-      line-height: 1.6;
-      padding: 2rem;
-    }
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      color: #111827;
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+            min-height: 100vh;
+        }
 
-    p {
-      margin-bottom: 1rem;
-    }
+        header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
 
-    .parking-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
+        .header-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
 
-    .card {
-      background-color: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 0.75rem;
-      padding: 1.5rem;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-      transition: transform 0.2s ease;
-    }
+        h1 {
+            font-size: 1.875rem;
+            color: #0f172a;
+            margin-bottom: 0.25rem;
+        }
 
-    .card:hover {
-      transform: translateY(-4px);
-    }
+        .subtitle {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
 
-    .card h2 {
-      font-size: 1.25rem;
-      margin-bottom: 0.5rem;
-      color: #111827;
-    }
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+            padding: 0.625rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
 
-    .card p {
-      margin-bottom: 0.5rem;
-    }
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
 
-    .card a {
-      color: #3b82f6;
-      text-decoration: none;
-    }
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
 
-    .card a:hover {
-      text-decoration: underline;
-    }
+        .legend {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+        }
 
-    .map-container {
-      margin-top: 1rem;
-      position: relative;
-      padding-bottom: 56.25%; /* 16:9 ratio */
-      height: 0;
-      overflow: hidden;
-      border-radius: 0.5rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
+        .legend h3 {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            color: #0f172a;
+        }
 
-    .map-container iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
+        .legend-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
 
-    footer {
-      text-align: center;
-      margin-top: 3rem;
-      color: #6b7280;
-    }
-  </style>
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-dot {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+        }
+
+        .legend-text {
+            font-size: 0.875rem;
+            color: #334155;
+        }
+
+        .map-container {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        #map {
+            height: 800px;
+            width: 100%;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, #dbeafe 0%, #e2e8f0 100%);
+            position: relative;
+            border-radius: 0.5rem;
+            border: 2px solid #cbd5e1;
+        }
+
+        .map-label {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            color: #334155;
+            border: 1px solid rgba(203, 213, 225, 0.5);
+        }
+
+        .pin {
+            position: absolute;
+            cursor: pointer;
+            transition: transform 0.2s;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            transform: translate(-50%, -100%);
+        }
+
+        .pin:hover {
+            transform: translate(-50%, -100%) scale(1.2);
+        }
+
+        .pin svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .map-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #94a3b8;
+        }
+
+        .map-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .pin {
+            position: absolute;
+            cursor: pointer;
+            transition: transform 0.2s;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        }
+
+        .pin:hover {
+            transform: scale(1.2);
+        }
+
+        .pin svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .spots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .spot-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .spot-card:hover {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .spot-card.selected {
+            border-color: currentColor;
+        }
+
+        .spot-header {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .spot-icon {
+            flex-shrink: 0;
+        }
+
+        .spot-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .spot-content {
+            flex: 1;
+        }
+
+        .spot-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 0.25rem;
+        }
+
+        .spot-address {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .spot-rate {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #2563eb;
+            margin-bottom: 0.5rem;
+        }
+
+        .spot-description {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.75rem;
+        }
+
+        .spot-footer {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.625rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: white;
+        }
+
+        .directions-btn {
+            font-size: 0.75rem;
+            color: #2563eb;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-weight: 500;
+        }
+
+        .directions-btn:hover {
+            color: #1d4ed8;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #94a3b8;
+            font-size: 1.5rem;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .close-btn:hover {
+            color: #64748b;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #334155;
+            margin-bottom: 0.25rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.625rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+        }
+
+        .detail-modal-header {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .detail-icon {
+            flex-shrink: 0;
+        }
+
+        .detail-icon svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .detail-info {
+            margin-bottom: 0.75rem;
+        }
+
+        .detail-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            color: #0f172a;
+        }
+
+        .detail-rate {
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        .btn-full {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        /* Color classes */
+        .color-free { color: #22c55e; }
+        .bg-free { background: #22c55e; }
+        .border-free { border-color: #22c55e; }
+
+        .color-paid { color: #ef4444; }
+        .bg-paid { background: #ef4444; }
+        .border-paid { border-color: #ef4444; }
+
+        .color-night { color: #eab308; }
+        .bg-night { background: #eab308; }
+        .border-night { border-color: #eab308; }
+
+        .color-resident { color: #a855f7; }
+        .bg-resident { background: #a855f7; }
+        .border-resident { border-color: #a855f7; }
+		
+		footer {
+		text-align: center;
+		padding: 2rem 1rem;
+		color: #64748b;
+		font-size: 0.875rem;
+		}
+
+        @media (max-width: 640px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .spots-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>Where to Park in Seaport, Boston</h1>
-  <p>Discover the top parking spots in Boston’s Seaport District with rates, locations, and embedded Google Maps.</p>
+    <header>
+        <div class="header-content">
+            <div>
+                <h1>Seaport Parking</h1>
+                <p class="subtitle">Find the best parking spots in Boston's Seaport District</p>
+            </div>
+            <button class="btn-primary" onclick="showAddModal()">
+                <span>+</span>
+                Add Parking Spot
+            </button>
+        </div>
+    </header>
 
-  <div class="parking-list">
-    <!-- Spot 1 -->
-    <div class="card">
-      <h2>Channel side Parking</h2>
-      <p><strong>Address:</strong> 45 Binford Street, Boston, MA 02210</p>
-      <p><strong>Rate:</strong> ~$12 weekends, $25 weeknights</p>
-      <p><strong>Description:</strong> Located right next to the new GE HQ.</p>
-      <a href="https://maps.app.goo.gl/fm32UBane5SybGTi7" target="_blank">Open in Google Maps</a>
-      <div class="map-container">
-       <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d801.4990481007632!2d-71.05256142097085!3d42.34788313628643!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e37b8bc58ca3d5%3A0x6928c3af9800a0d6!2sMetropolis!5e1!3m2!1sen!2sus!4v1748054379481!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
-      </div>
-      <br>
-      <a href="https://parking.com/boston/lot/channelside-lot?lid=91798" target="_blank">Buy parking online and save</a>  
+    <div class="container">
+        <!-- Legend -->
+        <div class="legend">
+            <h3>Legend</h3>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-dot bg-free"></div>
+                    <span class="legend-text">Free Parking</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot bg-paid"></div>
+                    <span class="legend-text">Paid Parking</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot bg-night"></div>
+                    <span class="legend-text">Free at Night</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot bg-resident"></div>
+                    <span class="legend-text">Resident Only</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map -->
+        <div class="map-container">
+            <div id="map">
+                <div class="map-label">Boston Seaport District</div>
+            </div>
+        </div>
+
+        <!-- Parking Spots Grid -->
+        <div class="spots-grid" id="spotsGrid"></div>
+    </div>
+	
+	<footer>
+		Created with love by ❤️ Sajin
+	</footer>
+
+    <!-- Add Parking Modal -->
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Parking Spot</h2>
+                <button class="close-btn" onclick="closeAddModal()">&times;</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Name *</label>
+                <input type="text" class="form-input" id="newName" placeholder="e.g., Waterfront Parking Lot">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Address *</label>
+                <input type="text" class="form-input" id="newAddress" placeholder="Full address">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Latitude *</label>
+                    <input type="number" step="any" class="form-input" id="newLat" placeholder="42.3517">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Longitude *</label>
+                    <input type="number" step="any" class="form-input" id="newLng" placeholder="-71.0446">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Type</label>
+                <select class="form-select" id="newType">
+                    <option value="free">Free Parking</option>
+                    <option value="paid">Paid Parking</option>
+                    <option value="night">Free at Night</option>
+                    <option value="resident">Resident Only</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Rate (optional)</label>
+                <input type="text" class="form-input" id="newRate" placeholder="e.g., Free or $10/hour">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Description (optional)</label>
+                <textarea class="form-textarea" id="newDescription" placeholder="Additional details about this parking spot"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Links (optional)</label>
+                <input type="text" class="form-input" id="newLinks" placeholder="https://example.com/parking-info (separate multiple links with commas)">
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAddModal()">Cancel</button>
+                <button class="btn btn-primary btn-full" onclick="openMaps(${spot.lat}, ${spot.lng})">
+            </div>
+        </div>
     </div>
 
-    <!-- Spot 2 -->
-    <div class="card">
-      <h2>Harbor Way Garage</h2>
-      <p><strong>Address:</strong> 111 Harbor Way Garage (Entrance at 111 Autumn Lane) </p>
-      <p><strong>Rate:</strong> 12$ upto 3 hours, Weeknights (after 4PM) & Weekends with validation</p>
-      <p><strong>Description:</strong>State-of-the-art, 24-hour Harbor Way Garage. Close to the superette and cisco beer garden.</p>
-      <a href="https://maps.app.goo.gl/x7C4wdbFVZWSvgTx8" target="_blank">Open in Google Maps</a>
-      <div class="map-container">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3205.870497869254!2d-71.04745122378078!3d42.350347635714954!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e3716644ba51bb%3A0x56055e04d812159!2sHarbor%20Way%20Garage!5e1!3m2!1sen!2sus!4v1748054760958!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>  
-      </div>
-      <br>
-      <a href="https://www.bostonseaport.xyz/places/harbor-way-garage" target="_blank">Participating locations for validation</a>
+    <!-- Detail Modal -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeDetailModal()">&times;</button>
+            </div>
+            <div id="detailContent"></div>
+        </div>
     </div>
 
-    <!-- Spot 3 -->
-    <div class="card">
-      <h2>V-1 Lot</h2>
-      <p><strong>Address:</strong> V-1 Lot – 302 Northern Ave.</p>
-      <p><strong>Rate:</strong> ~$18/day</p>
-      <p><strong>Description:</strong> 	Competitive pricing with decent proximity to Seaport waterfront and cruiseport.</p>
-      <a href="https://maps.app.goo.gl/QhByULGYrAcfbF4e7" target="_blank">Open in Google Maps</a>
-      <div class="map-container">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3205.989598006487!2d-71.03796172378087!3d42.348012435862515!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e37b17216821fb%3A0xff76bd1063499f4a!2sParcel%20V-1%20Lot%20(Pilgrim%20Parking)!5e1!3m2!1sen!2sus!4v1748054943838!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>  
-      </div>
-      <br>
-      <a href="https://www.parkwhiz.com/locations/60448" target="_blank">Buy parking online and save</a>
-    </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        let map;
+        let markers = [];
 
-    <!-- Spot 4 -->
-    <div class="card">
-      <h2>The Alyx Parking Garage</h2>
-      <p><strong>Address:</strong> 60A Pier 4 Blvd., Boston, MA 02210</p>
-      <p><strong>Rate:</strong> ~$18 upto 6 hours</p>
-      <p><strong>Description:</strong> Underground garage right next to putt shack and the superette.</p>
-      <a href="https://maps.app.goo.gl/PFaPZcjqQoKiCQ4h8" target="_blank">Open in Google Maps</a>
-      <div class="map-container">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2948.642124745034!2d-71.0448155!3d42.3501528!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e37144980be20b%3A0x9137b06e259c202!2sThe%20Alyx%20Parking%20Garage!5e0!3m2!1sen!2sus!4v1748055257015!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>  
-      </div>
-      <br>
-      <a href="https://www.parkwhiz.com/locations/42934" target="_blank">Buy parking online and save</a>
-    </div>
-  </div>
+        // Initial parking spots data
+        let parkingSpots = [
+            {
+                id: 1,
+                name: '45 Binford Street',
+                address: '45 Binford Street, Boston, MA 02210',
+                lat: 42.348085,
+                lng: -71.051555,
+                type: 'paid',
+                rate: '~$12 weekends, $25 weeknights',
+                description: 'Located right next to the new GE HQ.',
+                links: ['https://parking.com/boston/lot/channelside-lot?lid=91798']
+            },
+            {
+                id: 2,
+                name: '111 Harbor Way Garage',
+                address: '111 Harbor Way Garage (Entrance at 111 Autumn Lane)',
+                lat: 42.350506,
+                lng: -71.044852,
+                type: 'paid',
+                rate: '$12 up to 3 hours, Weeknights (after 4PM) & Weekends with validation (click more info for details on validation)',
+                description: 'State-of-the-art, 24-hour Harbor Way Garage. Close to the superette and cisco beer garden.',
+                links: ['https://www.bostonseaport.xyz/places/harbor-way-garage']
+            },
+            {
+                id: 3,
+                name: 'V-1 Lot',
+                address: 'V-1 Lot – 302 Northern Ave.',
+                lat: 42.347991,
+                lng: -71.035095,
+                type: 'paid',
+                rate: '~$18/day',
+                description: 'Competitive pricing with decent proximity to Seaport waterfront and cruiseport.',
+                links: ['https://www.parkwhiz.com/locations/60448']
+            },
+            {
+                id: 4,
+                name: '60A Pier 4 Parking',
+                address: '60A Pier 4 Blvd., Boston, MA 02210',
+                lat: 42.349863,
+                lng:  -71.044779,
+                type: 'paid',
+                rate: '~$18 up to 6 hours',
+                description: 'Underground garage right next to putt shack and the superette.',
+                links: ['https://www.parkwhiz.com/locations/42934']
+            },
+			{
+                id: 5,
+                name: 'Fortpoint free parking',
+                address: 'Medallion Ave',
+                lat: 42.345541,
+                lng:  -71.050760,
+                type: 'free',
+                rate: '2 Hours free, overnight residents only',
+                description: 'Free 2 hour parking or free overnight parking for residents',
+                links: []
+            },
+			{
+                id: 6,
+                name: 'South Boston Waterfront',
+                address: 'Binford Street',
+                lat: 42.347319,
+                lng:  -71.051824,
+                type: 'resident',
+                rate: 'South boston resident parking',
+                description: 'free south boston resident parking, check signs for overnight cleaning in summer',
+                links: []
+            },
+			{
+                id: 7,
+                name: 'Amazon BOS17',
+                address: '19-41 Melcher Street',
+                lat: 42.349802,
+                lng:  -71.050560,
+                type: 'resident',
+                rate: 'South boston resident parking',
+                description: 'free south boston resident parking, check signs for overnight cleaning in summer',
+                links: []
+            },
+			{
+                id: 8,
+                name: 'Summer street bridge',
+                address: 'Summer Street',
+                lat: 42.349605,
+                lng:  -71.049060,
+                type: 'resident',
+                rate: 'South boston resident parking',
+                description: 'free south boston resident parking, check signs for overnight cleaning in summer. Summer street is mostly paid parking except for the spots on the bridge (top) - that allow all day resident parking.',
+                links: []
+            },
+			{
+                id: 9,
+                name: 'Massport parking - Congress st',
+                address: 'Congress Street',
+                lat: 42.347599,
+                lng:  -71.038658,
+                type: 'night',
+                rate: 'Free 8pm to 8am',
+                description: 'Free 8pm to 8am',
+                links: []
+            },
+			{
+                id: 10,
+                name: 'Massport parking - Harborview Ln',
+                address: 'Congress Street',
+                lat: 42.347944,
+                lng:  -71.038728,
+                type: 'night',
+                rate: 'Free 8pm to 8am',
+                description: 'Free 8pm to 8am',
+                links: []
+            },
+			{
+                id: 11,
+                name: 'Massport parking - Northern Ave',
+                address: 'Northern Ave',
+                lat: 42.348320,
+                lng:  -71.037347,
+                type: 'night',
+                rate: 'Free 8pm to 8am',
+                description: 'Free 8pm to 8am',
+                links: []
+            },
+			{
+                id: 12,
+                name: 'Massport parking - D Street',
+                address: 'Congress Street',
+                lat: 42.348324,
+                lng:  -71.040677,
+                type: 'night',
+                rate: 'Free 8pm to 8am',
+                description: 'Free 8pm to 8am',
+                links: []
+            },
+			{
+                id: 13,
+                name: 'Massport parking - Seaport Blvd',
+                address: 'Congress Street',
+                lat: 42.349404,
+                lng:  -71.040268,
+                type: 'night',
+                rate: 'Free 8pm to 8am',
+                description: 'Free 8pm to 8am',
+                links: []
+            }
+        ];
 
-  <footer>
-    <p>© 2025 Where to Park in Seaport | Built with ❤️ by Sajin George</p>
-  </footer>
+        const typeLabels = {
+            free: 'Free Parking',
+            paid: 'Paid Parking',
+            night: 'Free at Night',
+            resident: 'Resident Only'
+        };
+
+        function createPinSVG(type) {
+            const colors = {
+                free: '#22c55e',
+                paid: '#ef4444',
+                night: '#eab308',
+                resident: '#a855f7'
+            };
+            return `<svg viewBox="0 0 24 24" fill="${colors[type]}" stroke="white" stroke-width="1.5">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>`;
+        }
+
+        function initMap() {
+            try {
+                map = L.map('map').setView([42.3517, -71.0446], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+                
+                // Remove fallback elements
+                const label = document.querySelector('.map-label');
+                if (label) label.remove();
+                
+                console.log('Real map loaded successfully');
+                return true;
+            } catch (error) {
+                console.error('Failed to load real map:', error);
+                return false;
+            }
+        }
+
+        function renderMap() {
+            if (map) {
+                // Clear existing markers
+                markers.forEach(marker => map.removeLayer(marker));
+                markers = [];
+
+                // Add real map markers
+                parkingSpots.forEach(spot => {
+                    const colors = { free: '#22c55e', paid: '#ef4444', night: '#eab308', resident: '#a855f7' };
+                    const marker = L.circleMarker([spot.lat, spot.lng], {
+                        color: colors[spot.type],
+                        fillColor: colors[spot.type],
+                        fillOpacity: 0.8,
+                        radius: 8
+                    }).addTo(map);
+                    
+                    marker.bindPopup(`<b>${spot.name}</b><br>${spot.address}`);
+                    marker.on('click', () => showDetail(spot));
+                    markers.push(marker);
+                });
+            } else {
+                // Fallback to visual pins
+                const mapEl = document.getElementById('map');
+                const existingPins = mapEl.querySelectorAll('.pin');
+                existingPins.forEach(pin => pin.remove());
+
+                parkingSpots.forEach((spot, index) => {
+                    const pin = document.createElement('div');
+                    pin.className = 'pin';
+                    
+                    const positions = [
+                        { left: '25%', top: '40%' },
+                        { left: '35%', top: '35%' },
+                        { left: '60%', top: '70%' },
+                        { left: '45%', top: '25%' }
+                    ];
+                    
+                    const pos = positions[index] || { left: `${30 + (index * 10)}%`, top: `${40 + (index % 2) * 20}%` };
+                    pin.style.left = pos.left;
+                    pin.style.top = pos.top;
+                    
+                    pin.innerHTML = createPinSVG(spot.type);
+                    pin.onclick = () => showDetail(spot);
+                    pin.title = spot.name;
+                    mapEl.appendChild(pin);
+                });
+            }
+        }
+
+        function renderSpots() {
+            const grid = document.getElementById('spotsGrid');
+            grid.innerHTML = parkingSpots.map(spot => `
+                <div class="spot-card" onclick="showDetail(${JSON.stringify(spot).replace(/"/g, '&quot;')})">
+                    <div class="spot-header">
+                        <div class="spot-icon color-${spot.type}">
+                            ${createPinSVG(spot.type)}
+                        </div>
+                        <div class="spot-content">
+                            <div class="spot-name">${spot.name}</div>
+                            <div class="spot-address">${spot.address}</div>
+                            ${spot.rate ? `<div class="spot-rate">${spot.rate}</div>` : ''}
+                            ${spot.description ? `<div class="spot-description">${spot.description}</div>` : ''}
+                            ${spot.links && spot.links.length > 0 ? `
+                                <div class="spot-links">
+                                    ${spot.links.map(link => `<a href="${link}" target="_blank" onclick="event.stopPropagation()" style="color:#2563eb;font-size:0.875rem;text-decoration:none;margin-right:1rem;">🔗 More Info</a>`).join('')}
+                                </div>
+                            ` : ''}
+                            <div class="spot-footer">
+                                <span class="badge bg-${spot.type}">${typeLabels[spot.type]}</span>
+                                <button class="directions-btn" onclick="event.stopPropagation(); openMaps(${spot.lat}, ${spot.lng})">
+                                    <span>↗</span> Get Directions
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAddModal() {
+            document.getElementById('addModal').classList.add('active');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.remove('active');
+            clearForm();
+        }
+
+        function clearForm() {
+            document.getElementById('newName').value = '';
+            document.getElementById('newAddress').value = '';
+            document.getElementById('newLat').value = '';
+            document.getElementById('newLng').value = '';
+            document.getElementById('newType').value = 'free';
+            document.getElementById('newRate').value = '';
+            document.getElementById('newDescription').value = '';
+            document.getElementById('newLinks').value = '';
+        }
+
+        function addParkingSpot() {
+            const name = document.getElementById('newName').value.trim();
+            const address = document.getElementById('newAddress').value.trim();
+            const lat = document.getElementById('newLat').value;
+            const lng = document.getElementById('newLng').value;
+            const type = document.getElementById('newType').value;
+            const rate = document.getElementById('newRate').value.trim();
+            const description = document.getElementById('newDescription').value.trim();
+            const linksInput = document.getElementById('newLinks').value.trim();
+
+            if (!name || !address || !lat || !lng) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            const links = linksInput ? linksInput.split(',').map(link => link.trim()).filter(link => link) : [];
+
+            const newSpot = {
+                id: Date.now(),
+                name,
+                address,
+                lat: parseFloat(lat),
+                lng: parseFloat(lng),
+                type,
+                rate,
+                description,
+                links
+            };
+
+            parkingSpots.push(newSpot);
+            renderMap();
+            renderSpots();
+            closeAddModal();
+        }
+
+        function showDetail(spot) {
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('detailContent');
+            
+            content.innerHTML = `
+                <div class="detail-modal-header">
+                    <div class="detail-icon color-${spot.type}">
+                        ${createPinSVG(spot.type)}
+                    </div>
+                    <div>
+                        <h2 class="modal-title">${spot.name}</h2>
+                        <span class="badge bg-${spot.type}">${typeLabels[spot.type]}</span>
+                    </div>
+                </div>
+                
+                <div class="detail-info">
+                    <div class="detail-label">Address</div>
+                    <div class="detail-value">${spot.address}</div>
+                </div>
+                
+                ${spot.rate ? `
+                    <div class="detail-info">
+                        <div class="detail-label">Rate</div>
+                        <div class="detail-rate">${spot.rate}</div>
+                    </div>
+                ` : ''}
+                
+                ${spot.description ? `
+                    <div class="detail-info">
+                        <div class="detail-label">Description</div>
+                        <div class="detail-value">${spot.description}</div>
+                    </div>
+                ` : ''}
+                
+                <button class="directions-btn" onclick="event.stopPropagation(); openMaps(${spot.lat}, ${spot.lng})">
+                    <span>↗</span> Get Directions
+                </button>
+            `;
+            
+            modal.classList.add('active');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        function openMaps(lat, lng) {
+			window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank');
+        }
+
+        // Close modals when clicking outside
+        document.getElementById('addModal').addEventListener('click', (e) => {
+            if (e.target.id === 'addModal') closeAddModal();
+        });
+
+        document.getElementById('detailModal').addEventListener('click', (e) => {
+            if (e.target.id === 'detailModal') closeDetailModal();
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Try to load real map first, fallback to visual map
+            setTimeout(() => {
+                if (!initMap()) {
+                    console.log('Using fallback visual map');
+                }
+                renderMap();
+                renderSpots();
+            }, 100);
+        });
+    </script>
 </body>
 </html>
